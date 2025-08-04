@@ -1,46 +1,108 @@
-{% set version = "2.0.2" %}
+{% set name = "PyHamcrest" %}
+{% set version = "2.1.0" %}
 
 package:
-  name: pyhamcrest
+  name: {{ name|lower }}
   version: {{ version }}
 
 source:
-  fn: PyHamcrest-{{ version }}.tar.gz
-  url: https://pypi.python.org/packages/source/P/PyHamcrest/PyHamcrest-{{ version }}.tar.gz
-  md5: 7a086f0b067f8d38958ec32f054559b4
+  url: https://pypi.python.org/packages/source/{{ name[0] }}/{{ name }}/{{ name|lower }}-{{ version }}.tar.gz
+  sha256: c6acbec0923d0cb7e72c22af1926f3e7c97b8e8d69fc7498eabacaf7c975bd9c
 
 build:
-  noarch: python
-  number: 2
-  script: python -m pip install --no-deps --ignore-installed .
+  number: 0
+  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+  skip: True  # [py<36]
 
 requirements:
   host:
     - pip
     - python
-    - setuptools
-
+    - hatchling
+    - hatch-vcs
   run:
     - python
-    - six
 
 test:
+  source_files:
+    - tests
   imports:
     - hamcrest
+    - hamcrest._version
     - hamcrest.core
+    - hamcrest.core.assert_that
+    - hamcrest.core.base_description
+    - hamcrest.core.base_matcher
     - hamcrest.core.core
-    - hamcrest.core.helpers
+    - hamcrest.core.core.allof
+    - hamcrest.core.core.anyof
+    - hamcrest.core.core.described_as
+    - hamcrest.core.core.future
+    - hamcrest.core.core.is_
+    - hamcrest.core.core.isanything
+    - hamcrest.core.core.isequal
+    - hamcrest.core.core.isinstanceof
+    - hamcrest.core.core.isnone
+    - hamcrest.core.core.isnot
+    - hamcrest.core.core.issame
+    - hamcrest.core.core.raises
+    - hamcrest.core.description
+    - hamcrest.core.helpers.hasmethod
+    - hamcrest.core.helpers.ismock
+    - hamcrest.core.helpers.wrap_matcher
+    - hamcrest.core.matcher
+    - hamcrest.core.selfdescribing
+    - hamcrest.core.string_description
     - hamcrest.library
     - hamcrest.library.collection
+    - hamcrest.library.collection.is_empty
+    - hamcrest.library.collection.isdict_containing
+    - hamcrest.library.collection.isdict_containingentries
+    - hamcrest.library.collection.isdict_containingkey
+    - hamcrest.library.collection.isdict_containingvalue
+    - hamcrest.library.collection.isin
+    - hamcrest.library.collection.issequence_containing
+    - hamcrest.library.collection.issequence_containinginanyorder
+    - hamcrest.library.collection.issequence_containinginorder
+    - hamcrest.library.collection.issequence_onlycontaining
     - hamcrest.library.integration
+    - hamcrest.library.integration.match_equality
     - hamcrest.library.number
+    - hamcrest.library.number.iscloseto
+    - hamcrest.library.number.ordering_comparison
     - hamcrest.library.object
+    - hamcrest.library.object.haslength
+    - hamcrest.library.object.hasproperty
+    - hamcrest.library.object.hasstring
     - hamcrest.library.text
+    - hamcrest.library.text.isequal_ignoring_case
+    - hamcrest.library.text.isequal_ignoring_whitespace
+    - hamcrest.library.text.stringcontains
+    - hamcrest.library.text.stringendswith
+    - hamcrest.library.text.stringmatches
+    - hamcrest.library.text.stringstartswith
+    - hamcrest.library.text.substringmatcher
+  commands:
+    - pip check
+    - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
+    - pytest -v tests
+  requires:
+    - pip
+    - pytest >=5.0
 
 about:
   home: https://github.com/hamcrest/PyHamcrest
-  license: BSD 3-Clause
-  summary: 'Hamcrest framework for matcher objects'
+  license: BSD-3-Clause
+  license_family: BSD
+  license_file: LICENSE.txt
+  summary: Hamcrest framework for matcher objects.
+  description: |
+    PyHamcrest is a framework for writing matcher objects, allowing you to declaratively define "match" rules.
+    There are a number of situations where matchers are invaluable, such as UI validation, or data filtering,
+    but it is in the area of writing flexible tests that matchers are most commonly used. This tutorial shows
+    you how to use PyHamcrest for unit testing.
+  doc_url: https://pyhamcrest.readthedocs.io
+  dev_url: https://github.com/hamcrest/PyHamcrest
 
 extra:
    recipe-maintainers:
